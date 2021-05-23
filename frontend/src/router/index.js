@@ -4,6 +4,9 @@ import Home from "../views/Home.vue";
 import Customer from "../views/Customer.vue";
 import Courier from "../views/Courier.vue";
 import Auth from "../views/Auth.vue";
+import CustomerMain from "../components/customer/CustomerMain.vue";
+import CustomerOrders from "../components/customer/CustomerOrders.vue";
+import CustomerOrderDelivery from "../components/customer/CustomerOrderDelivery.vue";
 
 Vue.use(VueRouter);
 
@@ -20,24 +23,23 @@ const routes = [
       },
       {
         path: "customer",
-        name: "Customer",
+        // name: "Customer",
         component: Customer,
         children: [
-          // TODO: add components
           {
-            path: ""
-            // name: "Auth",
-            // component: Auth
+            path: "/",
+            name: "CustomerMain",
+            component: CustomerMain
           },
           {
-            path: "orders"
-            // name: "Auth",
-            // component: Auth
+            path: "orders",
+            name: "CustomerOrders",
+            component: CustomerOrders
           },
           {
-            path: "order_delivery"
-            // name: "Auth",
-            // component: Auth
+            path: "order-delivery",
+            name: "CustomerOrderDelivery",
+            component: CustomerOrderDelivery
           }
         ]
       },
