@@ -95,6 +95,8 @@
           ]"
           max="50000"
           min="0"
+          @input="$v.documentCost.$touch()"
+          @blur="$v.documentCost.$touch()"
           ><strong slot="append">₽</strong></v-text-field
         >
         <v-radio-group v-model="payment_way">
@@ -124,6 +126,10 @@
           <v-col col="6" md="6" sm="12"
             ><v-text-field
               v-model="personFrom"
+              :error-messages="personFromErrors"
+              required
+              @input="$v.personFrom.$touch()"
+              @blur="$v.personFrom.$touch()"
               label="Кто отправляет документы"
               append-icon="mdi-account"
             ></v-text-field
@@ -131,6 +137,10 @@
           <v-col col="6" md="6" sm="12"
             ><v-text-field
               v-model="personFromPhone"
+              :error-messages="personFromPhoneErrors"
+              required
+              @input="$v.personFromPhone.$touch()"
+              @blur="$v.personFromPhone.$touch()"
               label="Номер телефона отправителя"
               append-icon="mdi-phone"
             ></v-text-field
@@ -139,14 +149,22 @@
         <v-row>
           <v-col col="6" md="6" sm="12"
             ><v-text-field
-              v-model="personFrom"
+              :error-messages="personToPhoneErrors"
+              required
+              @input="$v.personTo.$touch()"
+              @blur="$v.personTo.$touch()"
+              v-model="personTo"
               label="Кто получит документы"
               append-icon="mdi-account"
             ></v-text-field
           ></v-col>
           <v-col col="6" md="6" sm="12"
             ><v-text-field
-              v-model="personFromPhone"
+              v-model="personToPhone"
+              :error-messages="personToPhoneErrors"
+              required
+              @input="$v.personToPhone.$touch()"
+              @blur="$v.personToPhone.$touch()"
               label="Номер телефона получателя"
               append-icon="mdi-phone"
             ></v-text-field
@@ -173,7 +191,7 @@
             class="mt-4"
             block
             @click="calculateCost()"
-            :disabled="deliveryTo == '' || deliveryFrom == ''"
+            :disabled="deliveryTo == '' || deliveryFrom == '' || !formIsValid"
             >Отправить заказ</v-btn
           >
         </v-row>
@@ -185,6 +203,11 @@
 <script>
 import MapTwoDots from "../MapTwoDots";
 import { latLng } from "leaflet";
+import { validationMixin } from "vuelidate";
+import {
+  required
+  // maxLength
+} from "vuelidate/lib/validators";
 
 function distance(lat1, lon1, lat2, lon2, unit) {
   if (lat1 == lat2 && lon1 == lon2) {
@@ -243,6 +266,53 @@ export default {
       personToPhone: "",
       costLoading: false
     };
+  },
+  mixins: [validationMixin],
+  validations: {
+    personTo: { required },
+    personToPhone: { required },
+    personFrom: { required },
+    personFromPhone: { required }
+  },
+  computed: {
+    formIsValid() {
+      let a =
+        this.$v.personTo.$invalid ||
+        this.$v.personToPhone.$invalid ||
+        this.$v.personFrom.$invalid ||
+        this.$v.personFromPhone.$invalid;
+      console.log("personTo", this.$v.personTo.$invalid);
+      console.log("personToPhone", this.$v.personToPhone.$invalid);
+      console.log("personFrom", this.$v.personFrom.$invalid);
+      console.log("personFromPhone", this.$v.personFromPhone.$invalid);
+
+      console.log(!a);
+      return !a;
+    },
+    personToErrors() {
+      const errors = [];
+      if (!this.$v.personTo.$dirty) return errors;
+      !this.$v.personTo.required && errors.push("Поле обязательно!");
+      return errors;
+    },
+    personToPhoneErrors() {
+      const errors = [];
+      if (!this.$v.personToPhone.$dirty) return errors;
+      !this.$v.personToPhone.required && errors.push("Поле обязательно!");
+      return errors;
+    },
+    personFromErrors() {
+      const errors = [];
+      if (!this.$v.personFrom.$dirty) return errors;
+      !this.$v.personFrom.required && errors.push("Поле обязательно!");
+      return errors;
+    },
+    personFromPhoneErrors() {
+      const errors = [];
+      if (!this.$v.personFromPhone.$dirty) return errors;
+      !this.$v.personFromPhone.required && errors.push("Поле обязательно!");
+      return errors;
+    }
   },
   watch: {
     async searchTo(val) {
@@ -325,13 +395,6 @@ export default {
       }
     },
     delivery_way: function () {
-      if (this.deliveryTo !== "" && this.deliveryFrom !== "") {
-        this.calculateCost();
-      } else {
-        this.deliveryCost = 0;
-      }
-    },
-    payment_way: function () {
       if (this.deliveryTo !== "" && this.deliveryFrom !== "") {
         this.calculateCost();
       } else {

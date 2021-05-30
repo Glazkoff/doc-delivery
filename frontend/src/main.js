@@ -6,7 +6,7 @@ import vuetify from "@/plugins/vuetify";
 import { LMap, LTileLayer, LMarker, LTooltip, LPolyline } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 import Vue2LeafletLocatecontrol from "vue2-leaflet-locatecontrol";
-
+import Vuelidate from "vuelidate";
 import { Icon } from "leaflet";
 
 delete Icon.Default.prototype._getIconUrl;
@@ -17,6 +17,8 @@ Icon.Default.mergeOptions({
 });
 
 Vue.config.productionTip = false;
+
+Vue.use(Vuelidate);
 
 Vue.component("l-map", LMap);
 Vue.component("l-tooltip", LTooltip);
