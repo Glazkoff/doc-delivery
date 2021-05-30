@@ -12,7 +12,7 @@
             grow
           >
             <v-tabs-slider color="blue darken-4"></v-tabs-slider>
-            <v-tab v-for="i in tabs" :key="i">
+            <v-tab v-for="i in tabs" :key="i.name">
               <v-icon large>{{ i.icon }}</v-icon>
               <div class="caption py-1">{{ i.name }}</div>
             </v-tab>
@@ -26,6 +26,7 @@
                           v-model="loginEmail"
                           :rules="loginEmailRules"
                           label="E-mail"
+                          autocomplete="email"
                           required
                         ></v-text-field>
                       </v-col>
@@ -37,6 +38,7 @@
                           :type="show1 ? 'text' : 'password'"
                           name="input-10-1"
                           label="Пароль"
+                          autocomplete="current-password"
                           hint="Как минимум, 8 символов"
                           counter
                           @click:append="show1 = !show1"
@@ -91,6 +93,7 @@
                         <v-text-field
                           v-model="email"
                           :rules="emailRules"
+                          autocomplete="email"
                           label="E-mail"
                           required
                         ></v-text-field>
@@ -103,6 +106,7 @@
                           :type="show1 ? 'text' : 'password'"
                           name="input-10-1"
                           label="Пароль"
+                          autocomplete="new-password"
                           hint="Как минимум, 8 символов"
                           counter
                           @click:append="show1 = !show1"
@@ -116,6 +120,7 @@
                           :rules="[rules.required, passwordMatch]"
                           :type="show1 ? 'text' : 'password'"
                           name="input-10-1"
+                          autocomplete="new-password"
                           label="Повторите пароль"
                           counter
                           @click:append="show1 = !show1"

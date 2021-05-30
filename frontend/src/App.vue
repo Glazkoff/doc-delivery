@@ -25,4 +25,8 @@
     }
   }
 }
+
+.leaflet-container {
+  z-index: 0 !important;
+}
 </style>

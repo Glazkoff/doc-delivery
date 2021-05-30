@@ -1,13 +1,13 @@
 <template>
   <v-app id="inspire">
-    <v-system-bar app>
+    <v-app-bar app
+      ><v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon
+    ></v-app-bar>
+    <v-system-bar v-if="isNotification" app>
+      У заказа #321213 изменился статус на "Доставлено"
       <v-spacer></v-spacer>
 
-      <v-icon>mdi-square</v-icon>
-
-      <v-icon>mdi-circle</v-icon>
-
-      <v-icon>mdi-triangle</v-icon>
+      <v-icon @click="isNotification = false">mdi-close-circle</v-icon>
     </v-system-bar>
 
     <v-navigation-drawer v-model="drawer" app>
@@ -43,6 +43,12 @@
         <router-view></router-view>
       </v-container>
     </v-main>
+    <v-footer>
+      <v-card-text class="py-2 text-center">
+        {{ new Date().getFullYear() }} —
+        <strong>Глазков Никита, 181-321</strong>
+      </v-card-text></v-footer
+    >
   </v-app>
 </template>
 
@@ -56,7 +62,8 @@ export default {
       ["mdi-bike-fast", "Заказать доставку", "/customer/order-delivery"],
       ["mdi-clipboard-list", "Мои доставки", "/customer/orders"],
       ["mdi-alert-octagon", "Выйти", "/auth"]
-    ]
+    ],
+    isNotification: true
   })
 };
 </script>
