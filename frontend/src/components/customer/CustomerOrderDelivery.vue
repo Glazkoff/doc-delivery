@@ -1,10 +1,13 @@
 <template>
   <v-container>
+    <v-row justify="center">
+      <h1 class="text-center">Заказать доставку</h1>
+    </v-row>
     <v-row>
       <v-col cols="12" md="4" sm="12">
         <v-card class="pb-2">
           <v-card-title
-            class="headline font-weight-regular blue-grey white--text"
+            class="headline font-weight-regular secondary white--text"
           >
             Откуда забрать
           </v-card-title>
@@ -26,7 +29,7 @@
         </v-card>
         <v-card class="mt-4 pb-2">
           <v-card-title
-            class="headline font-weight-regular blue-grey white--text"
+            class="headline font-weight-regular secondary white--text"
           >
             Куда доставить
           </v-card-title>
@@ -49,7 +52,7 @@
           <template v-slot:label>
             <div>Как доставить</div>
           </template>
-          <v-radio value="onfoot">
+          <v-radio value="onfoot" :disabled="this.distance >= 21">
             <template v-slot:label>
               <div>Пешком</div>
             </template>
@@ -191,6 +194,7 @@
             class="mt-4"
             block
             @click="calculateCost()"
+            color="accent"
             :disabled="deliveryTo == '' || deliveryFrom == '' || !formIsValid"
             >Отправить заказ</v-btn
           >
@@ -443,10 +447,12 @@ export default {
       let xFrom = coordFrom.split(" ")[0];
       let yFrom = coordFrom.split(" ")[1];
       this.pointFrom = latLng(yFrom, xFrom);
-      console.log(this.pointFrom);
 
       this.distance = distance(xFrom, yFrom, xTo, yTo, "K");
-      console.log("Distance: ", this.distance);
+
+      if (this.distance >= 21) {
+        this.delivery_way = "oncar";
+      }
 
       let costPerKm = 25;
       let onFootCoef = 1.2;
@@ -499,5 +505,7 @@ export default {
   z-index: 1000;
   background-color: white;
   padding-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 </style>

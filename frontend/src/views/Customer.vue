@@ -1,9 +1,14 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar app
-      ><v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon
-    ></v-app-bar>
-    <v-system-bar v-if="isNotification" app>
+    <v-app-bar app color="primary" dark
+      ><v-app-bar-nav-icon dark @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title class="text-white">DocDelivery</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn class="accent" to="/customer/order-delivery"
+        ><v-icon left dark>mdi-plus</v-icon>СДЕЛАТЬ ЗАКАЗ</v-btn
+      >
+    </v-app-bar>
+    <v-system-bar v-if="isNotification" app color="secondary" dark>
       У заказа #321213 изменился статус на "Доставлено"
       <v-spacer></v-spacer>
 
@@ -11,9 +16,9 @@
     </v-system-bar>
 
     <v-navigation-drawer v-model="drawer" app>
-      <v-sheet color="grey lighten-4" class="pa-4">
+      <v-sheet color="white lighten-2" class="pa-4">
         <v-avatar class="mb-4" color="grey darken-1" size="64"></v-avatar>
-        <div>Никита Глазков, customer</div>
+        <div>Никита Глазков, <strong>клиент</strong></div>
         <div>john@vuetifyjs.com</div>
       </v-sheet>
 

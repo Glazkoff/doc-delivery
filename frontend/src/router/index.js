@@ -7,6 +7,10 @@ import Auth from "../views/Auth.vue";
 import CustomerMain from "../components/customer/CustomerMain.vue";
 import CustomerOrders from "../components/customer/CustomerOrders.vue";
 import CustomerOrderDelivery from "../components/customer/CustomerOrderDelivery.vue";
+import CourierActiveOrders from "../components/courier/CourierActiveOrders.vue";
+import CourierArchieveOrders from "../components/courier/CourierArchieveOrders.vue";
+import CourierSalary from "../components/courier/CourierSalary.vue";
+import CourierSpecificOrder from "../components/courier/CourierSpecificOrder.vue";
 
 Vue.use(VueRouter);
 
@@ -46,7 +50,29 @@ const routes = [
       {
         path: "courier",
         name: "Courier",
-        component: Courier
+        component: Courier,
+        children: [
+          {
+            path: "/",
+            name: "CourierActiveOrders",
+            component: CourierActiveOrders
+          },
+          {
+            path: "order/:id",
+            name: "CourierSpecificOrder",
+            component: CourierSpecificOrder
+          },
+          {
+            path: "archieve-orders",
+            name: "CourierArchieveOrders",
+            component: CourierArchieveOrders
+          },
+          {
+            path: "salary",
+            name: "CourierSalary",
+            component: CourierSalary
+          }
+        ]
       }
     ]
   },

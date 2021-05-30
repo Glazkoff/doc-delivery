@@ -4,7 +4,7 @@
       ref="map"
       :crs="layer.crs"
       :zoom="zoom"
-      :center="to != null ? to : center"
+      :center="center"
       style="height: 300px; width: 100%"
     >
       <l-tile-layer
@@ -26,7 +26,7 @@
       <l-polyline
         v-if="from != null && to != null"
         :lat-lngs="[to, from]"
-        :color="'#27A440'"
+        :color="'#1976D2'"
       />
     </l-map>
   </div>
@@ -44,8 +44,8 @@ export default {
   },
   data() {
     return {
-      zoom: 10,
-      center: latLng(55.751999, 37.617734),
+      zoom: 12,
+      centerPoint: latLng(55.751999, 37.617734),
       layerIndex: 0,
       layers: [
         {
@@ -60,6 +60,17 @@ export default {
   computed: {
     layer() {
       return this.layers[this.layerIndex];
+    },
+    center() {
+      let center = null;
+      if (this.to != null) {
+        center = this.to;
+      } else if (this.from != null) {
+        center = this.from;
+      } else {
+        center = this.centerPoint;
+      }
+      return center;
     }
   },
   methods: {

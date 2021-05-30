@@ -6,12 +6,12 @@
           <v-tabs
             v-model="tab"
             show-arrows
-            background-color="blue accent-4"
+            background-color="primary"
             icons-and-text
             dark
             grow
           >
-            <v-tabs-slider color="blue darken-4"></v-tabs-slider>
+            <v-tabs-slider color="blue darken-3"></v-tabs-slider>
             <v-tab v-for="i in tabs" :key="i.name">
               <v-icon large>{{ i.icon }}</v-icon>
               <div class="caption py-1">{{ i.name }}</div>
@@ -51,7 +51,7 @@
                           x-large
                           block
                           :disabled="!validLogin"
-                          color="success"
+                          dark
                           @click="validate"
                         >
                           Войти
@@ -132,7 +132,7 @@
                           x-large
                           block
                           :disabled="!validRegister"
-                          color="success"
+                          dark
                           @click="validate"
                           >Зарегистрироваться</v-btn
                         >

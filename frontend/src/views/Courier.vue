@@ -1,26 +1,37 @@
 <template>
-   <v-app id="inspire">
-    <v-system-bar app>
+  <v-app id="inspire">
+    <v-app-bar app color="primary" dark
+      ><v-app-bar-nav-icon dark @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title class="text-white">DocDelivery</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn class="accent" to="/courier"
+        ><v-icon left dark>mdi-plus</v-icon>ПРИНЯТЬ ЗАКАЗ</v-btn
+      >
+    </v-app-bar>
+    <v-system-bar v-if="isNotification" app color="secondary" dark>
+      Появился свободный заказ #321213
       <v-spacer></v-spacer>
 
-      <v-icon>mdi-square</v-icon>
-
-      <v-icon>mdi-circle</v-icon>
-
-      <v-icon>mdi-triangle</v-icon>
+      <v-icon @click="isNotification = false">mdi-close-circle</v-icon>
     </v-system-bar>
 
     <v-navigation-drawer v-model="drawer" app>
-      <v-sheet color="grey lighten-4" class="pa-4">
+      <v-sheet color="white lighten-2" class="pa-4">
         <v-avatar class="mb-4" color="grey darken-1" size="64"></v-avatar>
-        <div>Никита Глазков, courier</div>
+        <div>Никита Глазков, <strong>курьер</strong></div>
         <div>john@vuetifyjs.com</div>
       </v-sheet>
 
       <v-divider></v-divider>
 
       <v-list>
-        <v-list-item v-for="[icon, text] in links" :key="icon" link>
+        <v-list-item
+          v-for="[icon, text, to] in links"
+          :exact="true"
+          :key="icon"
+          :to="to"
+          link
+        >
           <v-list-item-icon>
             <v-icon>{{ icon }}</v-icon>
           </v-list-item-icon>
@@ -34,40 +45,15 @@
 
     <v-main>
       <v-container class="py-8 px-6" fluid>
-        <!-- <v-row>
-          <v-col v-for="card in cards" :key="card" cols="12">
-            <v-card>
-              <v-subheader>{{ card }}</v-subheader>
-
-              <v-list two-line>
-                <template v-for="n in 6">
-                  <v-list-item :key="n">
-                    <v-list-item-avatar color="grey darken-1">
-                    </v-list-item-avatar>
-
-                    <v-list-item-content>
-                      <v-list-item-title>Message {{ n }}</v-list-item-title>
-
-                      <v-list-item-subtitle>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit. Nihil repellendus distinctio similique
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-
-                  <v-divider
-                    v-if="n !== 6"
-                    :key="`divider-${n}`"
-                    inset
-                  ></v-divider>
-                </template>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row> -->
         <router-view></router-view>
       </v-container>
     </v-main>
+    <v-footer>
+      <v-card-text class="py-2 text-center">
+        {{ new Date().getFullYear() }} —
+        <strong>Глазков Никита, 181-321</strong>
+      </v-card-text></v-footer
+    >
   </v-app>
 </template>
 
@@ -75,14 +61,15 @@
 export default {
   name: "Courier",
   data: () => ({
-    cards: ["Today", "Yesterday"],
     drawer: null,
     links: [
-      ["mdi-inbox-arrow-down", "Главная"],
-      ["mdi-inbox-arrow-down", "Заказать доставку"],
-      ["mdi-send", "Мои доставки"],
-      ["mdi-alert-octagon", "Выйти"]
-    ]
+      // ["mdi-home", "Главная", "/courier"],
+      ["mdi-bike-fast", "Активные заказы", "/courier"],
+      ["mdi-folder-clock", "Архив заказов", "/courier/archieve-orders"],
+      ["mdi-cash", "Зарплата", "/courier/salary"],
+      ["mdi-alert-octagon", "Выйти", "/auth"]
+    ],
+    isNotification: true
   })
 };
 </script>

@@ -1,72 +1,135 @@
 <template>
-  <v-row justify="center">
-    <v-expansion-panels inset>
-      <v-expansion-panel v-for="(item, i) in 5" :key="i">
-        <v-expansion-panel-header>Item</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </v-row>
-  <!-- <v-col cols="12">
-      <v-card>
-        <v-subheader>Активные заказы</v-subheader>
-        <v-list two-line>
-          <template v-for="n in 6">
-            <v-list-item :key="n">
-              <v-list-item-avatar color="grey darken-1"> </v-list-item-avatar>
+  <v-container>
+    <v-row justify="center">
+      <h1 class="text-center">Заказы</h1>
+    </v-row>
 
-              <v-list-item-content>
-                <v-list-item-title>Message {{ n }}</v-list-item-title>
-
-                <v-list-item-subtitle>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Nihil repellendus distinctio similique
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider v-if="n !== 6" :key="`divider-${n}`" inset></v-divider>
+    <v-row justify="center">
+      <v-col>
+        <v-data-table
+          :headers="headers"
+          :items="orders"
+          :expanded.sync="expanded"
+          item-key="name"
+          show-expand
+          class="elevation-1"
+          v-if="!loading"
+          multi-sort
+          :footer-props="{
+            'items-per-page-text': 'Заказов на странице',
+            pageText: '{0}-{1} из {2}'
+          }"
+        >
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-toolbar-title>Активные заказы</v-toolbar-title>
+              <v-spacer></v-spacer>
+            </v-toolbar>
           </template>
-        </v-list>
-      </v-card>
-    </v-col>
-    <v-col cols="12">
-      <v-card>
-        <v-subheader>Архив заказов</v-subheader>
-        <v-list two-line>
-          <template v-for="n in 6">
-            <v-list-item :key="n">
-              <v-list-item-avatar color="grey darken-1"> </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title>Message {{ n }}</v-list-item-title>
-
-                <v-list-item-subtitle>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Nihil repellendus distinctio similique
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider v-if="n !== 6" :key="`divider-${n}`" inset></v-divider>
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              <v-row>
+                <v-col cols="4" md="4" sm="12"
+                  ><div class="pt-4 pb-4">
+                    <h4 class="mb-4">Подробно о заказе №{{ item.id }}</h4>
+                    <p class="text-left">
+                      <strong>От:</strong><br />{{ item.address_from }}
+                    </p>
+                    <p class="text-left">
+                      <strong>До:</strong><br />{{ item.address_to }}
+                    </p>
+                    <p class="text-left">
+                      <strong>Дата отправки:</strong><br />{{
+                        item.departure_date
+                      }}
+                    </p>
+                    <p class="text-left">
+                      <strong>Дата получения:</strong><br />{{
+                        item.arrival_date
+                      }}
+                    </p>
+                    <p class="text-left">
+                      <strong>Кто отправлял документы:</strong><br />{{
+                        item.sender
+                      }}
+                    </p>
+                    <p class="text-left">
+                      <strong>Кто получал документы:</strong><br />{{
+                        item.recipient
+                      }}
+                    </p>
+                  </div></v-col
+                >
+                <v-col cols="8" md="8" sm="12" align-self="center">
+                  <MapTwoDots
+                    class="mt-4 mb-4"
+                    :from="item.pointFrom"
+                    :to="item.pointTo"
+                  ></MapTwoDots>
+                </v-col>
+              </v-row>
+            </td>
           </template>
-        </v-list>
-      </v-card>
-    </v-col> -->
+        </v-data-table>
+        <v-data-table
+          v-else
+          item-key="id"
+          class="elevation-1"
+          loading
+          loading-text="Loading... Please wait"
+        ></v-data-table>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
+import MapTwoDots from "../MapTwoDots";
 export default {
   name: "CustomerOrders",
   data() {
     return {
-      cards: ["Today", "Yesterday"]
+      cards: ["Today", "Yesterday"],
+      loading: false,
+      expanded: [],
+      headers: [
+        {
+          text: "Код доставки",
+          align: "start",
+          sortable: false,
+          value: "id"
+        },
+        { text: "Дата отправки", value: "departure_date" },
+        { text: "Дата получения", value: "arrival_date" },
+        { text: "Курьер", value: "courier" },
+        { text: "Статус", value: "status" },
+        { text: "", value: "data-table-expand" }
+      ],
+      orders: [
+        {
+          id: 1,
+          departure_date: "25.03.2020",
+          arrival_date: "25.03.2020",
+          courier: "Иванов С.А.",
+          status: "Передан курьеру",
+          address_from: "г Астрахань, ул Победы, д 54",
+          address_to: "г Волгоград, ул Строителей, д 12",
+          sender: "Иванов Фёдор Павлович",
+          recipient: "Фёдоров Павел Иванович",
+          pointFrom: {
+            lat: 46.355551,
+            lng: 48.057676
+          },
+          pointTo: {
+            lat: 48.606571,
+            lng: 44.3626
+          }
+        }
+      ]
     };
+  },
+  components: {
+    MapTwoDots
   }
 };
 </script>
