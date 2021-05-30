@@ -97,7 +97,9 @@
       </v-stepper-step>
 
       <v-stepper-content step="4">
-        <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
+        <v-card color="grey lighten-1" class="mb-12">
+          <canvas></canvas>
+        </v-card>
         <v-btn color="primary" @click="finishStep4">
           Подтвердить корректность подписи и передачу посылки
         </v-btn>
@@ -109,6 +111,7 @@
 
 <script>
 import MapTwoDots from "../MapTwoDots";
+// import SignaturePad from "signature_pad";
 
 export default {
   name: "CourierSpecificOrder",
@@ -179,6 +182,20 @@ export default {
       this.step4Complete = false;
       this.e13 = 3;
     }
+  },
+  mounted() {
+    // let canvas = document.querySelector("canvas");
+    // let signaturePad = new SignaturePad(canvas);
+    // signaturePad.penColor = "rgb(66, 133, 244)";
+    // function resizeCanvas() {
+    //   var ratio = Math.max(window.devicePixelRatio || 1, 1);
+    //   canvas.width = canvas.offsetWidth * ratio;
+    //   canvas.height = canvas.offsetHeight * ratio;
+    //   canvas.getContext("2d").scale(ratio, ratio);
+    //   signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+    // }
+    // window.addEventListener("resize", resizeCanvas);
+    // resizeCanvas();
   }
 };
 </script>
