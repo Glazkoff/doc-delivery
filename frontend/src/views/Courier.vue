@@ -12,7 +12,9 @@
       Появился свободный заказ #321213
       <v-spacer></v-spacer>
 
-      <v-icon @click="isNotification = false">mdi-close-circle</v-icon>
+      <v-icon @click="isNotification = false" color="red"
+        >mdi-close-circle</v-icon
+      >
     </v-system-bar>
 
     <v-navigation-drawer v-model="drawer" app>

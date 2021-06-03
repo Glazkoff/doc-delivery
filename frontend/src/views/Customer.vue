@@ -12,7 +12,9 @@
       У заказа #321213 изменился статус на "Доставлено"
       <v-spacer></v-spacer>
 
-      <v-icon @click="isNotification = false">mdi-close-circle</v-icon>
+      <v-icon @click="isNotification = false" color="red"
+        >mdi-close-circle</v-icon
+      >
     </v-system-bar>
 
     <v-navigation-drawer v-model="drawer" app>

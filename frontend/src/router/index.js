@@ -49,7 +49,6 @@ const routes = [
       },
       {
         path: "courier",
-        name: "Courier",
         component: Courier,
         children: [
           {
