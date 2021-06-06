@@ -15,6 +15,7 @@
           class="elevation-1"
           v-if="!loading"
           multi-sort
+          no-data-text="Пока здесь нет заказов"
           :footer-props="{
             'items-per-page-text': 'Заказов на странице',
             pageText: '{0}-{1} из {2}'

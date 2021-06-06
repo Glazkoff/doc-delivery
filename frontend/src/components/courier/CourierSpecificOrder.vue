@@ -4,7 +4,7 @@
       <h1 class="text-center mb-4">Заказ #{{ order.id }}</h1>
     </v-row>
 
-    <v-stepper v-model="e13" vertical>
+    <v-stepper v-if="!success" v-model="e13" vertical>
       <v-stepper-step step="1" :complete="step1Complete"
         >Шаг 1. Заберите посылку у отправителя</v-stepper-step
       >
@@ -105,8 +105,16 @@
         </v-btn>
         <v-btn text @click="goToStep3"> Вернуться на предыдущий шаг </v-btn>
       </v-stepper-content>
-    </v-stepper></v-container
-  >
+    </v-stepper>
+    <v-card v-else class="pt-5 pb-5">
+      <v-icon class="display-4 green--text">mdi-map-marker-check</v-icon>
+      <h2 class="display-2 green--text mb-2">Заказ завершён!</h2>
+      <h3 class="">Вами заработано: {{ order.salary_part }}</h3>
+      <v-btn dark class="blue darken mt-2" to="/courier"
+        ><v-icon left dark>mdi-plus</v-icon>ПРИНЯТЬ ЕЩЁ ОДИН ЗАКАЗ</v-btn
+      >
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -118,6 +126,7 @@ export default {
   components: { MapTwoDots },
   data() {
     return {
+      success: false,
       e13: 1,
       step1Complete: false,
       step2Complete: false,
@@ -127,6 +136,7 @@ export default {
         id: 1,
         departure_date: "25.03.2020",
         arrival_date: "25.03.2020",
+        salary_part: "1,450 ₽",
         courier: "Иванов С.А.",
         status: "Передан курьеру",
         address_from: "г Астрахань, ул Победы, д 54",
@@ -160,6 +170,7 @@ export default {
     finishStep4() {
       this.step4Complete = true;
       // this.e13 = 2;
+      this.success = true;
     },
     goToStep1() {
       this.step1Complete = false;

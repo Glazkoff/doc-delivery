@@ -4,7 +4,7 @@
       ><v-app-bar-nav-icon dark @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-white">DocDelivery</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn class="accent" to="/courier"
+      <v-btn class="blue darken" to="/courier"
         ><v-icon left dark>mdi-plus</v-icon>ПРИНЯТЬ ЗАКАЗ</v-btn
       >
     </v-app-bar>

@@ -161,7 +161,7 @@ export default {
     validate() {
       if (this.$refs.loginForm.validate()) {
         // submit form to server/API here...
-        this.$router.push("/customer");
+        this.$router.push("/");
       }
     },
     reset() {

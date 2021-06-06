@@ -26,7 +26,7 @@ const routes = [
         component: Auth
       },
       {
-        path: "customer",
+        path: "",
         // name: "Customer",
         component: Customer,
         children: [

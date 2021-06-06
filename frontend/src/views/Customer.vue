@@ -4,7 +4,7 @@
       ><v-app-bar-nav-icon dark @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-white">DocDelivery</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn class="accent" to="/customer/order-delivery"
+      <v-btn class="blue darken" to="/order-delivery"
         ><v-icon left dark>mdi-plus</v-icon>СДЕЛАТЬ ЗАКАЗ</v-btn
       >
     </v-app-bar>
@@ -65,9 +65,9 @@ export default {
   data: () => ({
     drawer: null,
     links: [
-      ["mdi-home", "Главная", "/customer"],
-      ["mdi-bike-fast", "Заказать доставку", "/customer/order-delivery"],
-      ["mdi-clipboard-list", "Мои доставки", "/customer/orders"],
+      ["mdi-home", "Главная", "/"],
+      ["mdi-bike-fast", "Заказать доставку", "/order-delivery"],
+      ["mdi-clipboard-list", "Мои доставки", "/orders"],
       ["mdi-alert-octagon", "Выйти", "/auth"]
     ],
     isNotification: true
