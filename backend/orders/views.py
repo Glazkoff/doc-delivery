@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Order, Courier
 from .serializers import OrderDetailSerializer, OrdersListSerializer, CreateOrderSerializer
+from braces.views import CsrfExemptMixin
 
 # Create your views here.
 
 
-class OrdersListView(APIView):
+class OrdersListView(CsrfExemptMixin, APIView):
     """Вывод списка заказов"""
 
     def get(self, request):
@@ -16,12 +17,18 @@ class OrdersListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        authentication_classes = []
         serializer = CreateOrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Заказ успешно добавлен"}, status=201)
         else:
-            return Response(status=400)
+            return Response(serializer.errors, status=400)
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return []
+        return super().get_permissions()
 
 
 class OrderDetailView(APIView):

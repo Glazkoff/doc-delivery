@@ -25,6 +25,10 @@ class OrdersListSerializer(serializers.ModelSerializer):
     """Полное представление списка проектов"""
 
     courier = CourierDetailSerializer()
+    departure_date = serializers.DateField(
+        format="%d.%m.%Y", required=False, read_only=True)
+    arrival_date = serializers.DateField(
+        format="%d.%m.%Y", required=False, read_only=True)
 
     class Meta:
         model = Order

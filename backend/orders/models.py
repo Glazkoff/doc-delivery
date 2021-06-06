@@ -17,6 +17,12 @@ class Courier(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = (('0', 'Поиск курьера'), ('1', 'Курьер движется к отправителю'), ('2', 'Курьер движется к получателю'),
                       ('3', 'Подтверждение личности получателя'), ('4', 'Передача посылки получателю'), ('5', 'Завершено'))
+    WEIGHT_CHOICES = (('1', 'До 1 кг'), ('5', 'До 5 кг'), ('10', 'До 10 кг'),
+                      ('15', 'До 15 кг'))
+    PAYMENT_CHOICES = (('card', 'Картой онлайн'),
+                       ('cash', 'Наличными курьеру'))
+    TRANSPORT_CHOICES = (('onfoot', 'Пешком'),
+                         ('oncar', 'На машине'))
     departure_date = models.DateField(verbose_name='Дата отправления')
     arrival_date = models.DateField(
         verbose_name='Дата доставки', null=True, blank=True)
@@ -25,7 +31,15 @@ class Order(models.Model):
     courier = models.ForeignKey(
         Courier, verbose_name='Курьер', on_delete=models.SET_NULL, null=True, blank=True)
     status = models.CharField(
-        verbose_name='Статус заказа', max_length=10, choices=STATUS_CHOICES, default="0")
+        verbose_name='Статус заказа', max_length=1, choices=STATUS_CHOICES, default="0")
+    weight = models.CharField(
+        verbose_name='Вес заказа', max_length=2, choices=WEIGHT_CHOICES, default="1")
+    parcel_value = models.IntegerField(
+        verbose_name='Ценность посылки', null=True, blank=True)
+    payment = models.CharField(
+        verbose_name='Способ оплаты', max_length=4, choices=PAYMENT_CHOICES, default="cash")
+    delivery_way = models.CharField(
+        verbose_name='Как доставить', max_length=6, choices=TRANSPORT_CHOICES, default="oncar")
     address_from = models.CharField(
         verbose_name='Адрес отправления', max_length=100)
     address_to = models.CharField(

@@ -5,3 +5,4 @@ django-extensions
 djangorestframework
 psycopg2-binary
 django-admin-interface
+django-braces
