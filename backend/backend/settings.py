@@ -31,8 +31,12 @@ DEBUG = True
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 DOMAIN = env.str('DOMAIN')
 
-
 # Application definition
+
+ADMIN_THEME_CONFIG = [
+    'admin_interface',
+    'colorfield'
+]
 
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -43,13 +47,18 @@ DJANGO_APPS = [
     'django.contrib.staticfiles'
 ]
 
-THIRD_PARTY_APPS = ['rest_framework']
+THIRD_PARTY_APPS = [
+    'rest_framework'
+]
 
 LOCAL_APPS = [
     'orders',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = ADMIN_THEME_CONFIG + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SILENCED_SYSTEM_CHECKS = ['security.W019']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
