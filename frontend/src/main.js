@@ -8,6 +8,9 @@ import "leaflet/dist/leaflet.css";
 import Vue2LeafletLocatecontrol from "vue2-leaflet-locatecontrol";
 import Vuelidate from "vuelidate";
 import { Icon } from "leaflet";
+import axios from "axios";
+import VueAxios from "vue-axios";
+import VueCookies from "vue-cookies";
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -26,6 +29,9 @@ Vue.component("l-polyline", LPolyline);
 Vue.component("l-tile-layer", LTileLayer);
 Vue.component("l-marker", LMarker);
 Vue.component("v-locatecontrol", Vue2LeafletLocatecontrol);
+
+Vue.use(VueAxios, axios);
+Vue.use(VueCookies);
 
 new Vue({
   router,

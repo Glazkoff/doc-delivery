@@ -10,11 +10,13 @@
           :headers="headers"
           :items="orders"
           :expanded.sync="expanded"
-          item-key="name"
+          :single-expand="singleExpand"
+          item-key="id"
           show-expand
           class="elevation-1"
           v-if="!loading"
           multi-sort
+          loading-text="Загрузка списка заказов... Пожалуйста, подождите"
           no-data-text="Пока здесь нет заказов"
           :footer-props="{
             'items-per-page-text': 'Заказов на странице',
@@ -90,8 +92,8 @@ export default {
   name: "CustomerOrders",
   data() {
     return {
-      cards: ["Today", "Yesterday"],
       loading: false,
+      singleExpand: false,
       expanded: [],
       headers: [
         {
@@ -108,7 +110,7 @@ export default {
       ],
       orders: [
         {
-          id: 1,
+          id: 0,
           departure_date: "25.03.2020",
           arrival_date: "25.03.2020",
           courier: "Иванов С.А.",
@@ -131,6 +133,63 @@ export default {
   },
   components: {
     MapTwoDots
+  },
+  async mounted() {
+    this.loading = true;
+    try {
+      let res = await this.$http.get("/api/orders");
+      if (res.data.length != null) {
+        console.log(res.data);
+        res.data.forEach(element => {
+          if (element.courier != null) {
+            element.courier = element.courier.name;
+          } else {
+            element.courier = "-";
+          }
+          if (element.arrival_date == null) {
+            element.arrival_date = "-";
+          }
+          element.pointFrom = {};
+          element.pointTo = {};
+          element.pointFrom.lat = element.pointFromLat;
+          element.pointFrom.lng = element.pointFromLng;
+          element.pointTo.lat = element.pointToLat;
+          element.pointTo.lng = element.pointToLng;
+
+          switch (element.status) {
+            case "0":
+            default:
+              element.status = "Поиск курьера";
+              break;
+
+            case "1":
+              element.status = "Курьер движется к отправителю";
+              break;
+
+            case "2":
+              element.status = "Курьер движется к получателю";
+              break;
+
+            case "3":
+              element.status = "Подтверждение личности получателя";
+              break;
+
+            case "4":
+              element.status = "Передача посылки получателю";
+              break;
+
+            case "5":
+              element.status = "Завершено";
+              break;
+          }
+          this.orders.push(element);
+        });
+      }
+      this.loading = false;
+    } catch (error) {
+      console.log(error);
+      this.loading = false;
+    }
   }
 };
 </script>

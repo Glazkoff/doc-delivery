@@ -193,7 +193,7 @@
           <v-btn
             class="mt-4"
             block
-            @click="calculateCost()"
+            @click="sendRequest"
             color="accent"
             :disabled="deliveryTo == '' || deliveryFrom == '' || !formIsValid"
             >Отправить заказ</v-btn
@@ -285,12 +285,7 @@ export default {
         this.$v.personToPhone.$invalid ||
         this.$v.personFrom.$invalid ||
         this.$v.personFromPhone.$invalid;
-      console.log("personTo", this.$v.personTo.$invalid);
-      console.log("personToPhone", this.$v.personToPhone.$invalid);
-      console.log("personFrom", this.$v.personFrom.$invalid);
-      console.log("personFromPhone", this.$v.personFromPhone.$invalid);
 
-      console.log(!a);
       return !a;
     },
     personToErrors() {
@@ -436,13 +431,12 @@ export default {
     async calculateCost() {
       this.costLoading = true;
       let coordFrom = await this.collectCoordinates(this.deliveryFrom);
-      console.log("coordFrom", coordFrom);
+
       let coordTo = await this.collectCoordinates(this.deliveryTo);
-      console.log("coordTo", coordTo);
+
       let xTo = coordTo.split(" ")[0];
       let yTo = coordTo.split(" ")[1];
       this.pointTo = latLng(yTo, xTo);
-      console.log(this.pointTo);
 
       let xFrom = coordFrom.split(" ")[0];
       let yFrom = coordFrom.split(" ")[1];
@@ -492,6 +486,30 @@ export default {
       deliveryCost += Math.round(this.documentCost * 0.1);
       this.deliveryCost = Math.round(deliveryCost * 100) / 100;
       this.costLoading = false;
+    },
+    async sendRequest() {
+      console.log("COOKIE!: ", this.$cookies.get("csrftoken"));
+
+      this.calculateCost();
+      let obj = {
+        departure_date: "06.06.2021",
+        cost: Math.ceil(this.deliveryCost),
+        salary_part: Math.ceil(this.deliveryCost * 0.2),
+        weight: this.weight,
+        parcel_value: this.documentCost,
+        payment: this.payment_way,
+        delivery_way: this.delivery_way,
+        address_from: this.deliveryTo,
+        address_to: this.deliveryTo,
+        sender: this.personFrom,
+        recipient: this.personTo,
+        pointFromLat: this.pointFrom.lat,
+        pointFromLng: this.pointFrom.lng,
+        pointToLat: this.pointTo.lat,
+        pointToLng: this.pointTo.lng
+      };
+
+      await this.$http.post("/api/orders/", obj);
     }
   }
 };
