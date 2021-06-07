@@ -3,7 +3,24 @@
     <v-row justify="center">
       <h1 class="text-center">Заказать доставку</h1>
     </v-row>
-    <v-row>
+    <v-row v-if="success" justify="center">
+      <v-card class="mt-4 pt-4 pl-4 pr-4 pb-4">
+        <v-icon class="display-4 green--text">mdi-file-document-edit</v-icon>
+        <h2 class="display-2 green--text mb-2">Заявка отправлена!</h2>
+        <p class="">
+          Мы уже ищем вам курьера!<br />Сейчас вы можете совершить ещё один
+          заказ или перейти к списку ваших доставок
+        </p>
+        <v-btn dark class="blue darken mt-4" @click="success = false"
+          ><v-icon left dark>mdi-plus</v-icon>СДЕЛАТЬ ЕЩЁ ОДИН ЗАКАЗ</v-btn
+        ><br />
+        <v-btn dark class="mt-2" to="/orders"
+          ><v-icon left dark>mdi-format-list-bulleted-square</v-icon>СПИСОК
+          ЗАКАЗОВ</v-btn
+        >
+      </v-card>
+    </v-row>
+    <v-row v-else>
       <v-col cols="12" md="4" sm="12">
         <v-card class="pb-2">
           <v-card-title
@@ -259,6 +276,7 @@ export default {
       searchToLoading: false,
       searchFromLoading: false,
       searchTo: null,
+      success: false,
       searchFrom: null,
       delivery_way: "onfoot",
       weight: "1",
@@ -509,7 +527,12 @@ export default {
         pointToLng: this.pointTo.lng
       };
 
-      await this.$http.post("/api/orders/", obj);
+      try {
+        await this.$http.post("/api/orders/", obj);
+        this.success = true;
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };
