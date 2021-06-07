@@ -517,7 +517,7 @@ export default {
         parcel_value: this.documentCost,
         payment: this.payment_way,
         delivery_way: this.delivery_way,
-        address_from: this.deliveryTo,
+        address_from: this.deliveryFrom,
         address_to: this.deliveryTo,
         sender: this.personFrom,
         recipient: this.personTo,
@@ -530,6 +530,17 @@ export default {
       try {
         await this.$http.post("/api/orders/", obj);
         this.success = true;
+        //
+        this.deliveryCost = 0;
+        this.weight = 0;
+        this.documentCost = 0;
+        this.deliveryFrom = "";
+        this.deliveryTo = "";
+        this.personTo = "";
+        this.pointFrom.lat = null;
+        this.pointFrom.lng = null;
+        this.pointTo.lat = null;
+        this.pointTo.lng = null;
       } catch (error) {
         console.log(error);
       }

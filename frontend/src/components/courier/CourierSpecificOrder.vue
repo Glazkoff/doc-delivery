@@ -93,7 +93,7 @@
       </v-stepper-content>
 
       <v-stepper-step step="4" :complete="step4Complete">
-        Шаг 4. Попросите получателя оставить подпись в открывшемся окне
+        Шаг 4. Попросите получателя оставить подпись
       </v-stepper-step>
 
       <v-stepper-content step="4">
