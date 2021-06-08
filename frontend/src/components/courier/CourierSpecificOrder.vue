@@ -97,10 +97,17 @@
       </v-stepper-step>
 
       <v-stepper-content step="4">
-        <v-card color="grey lighten-1" class="mb-12">
-          <canvas></canvas>
+        <v-card color="" class="mb-12">
+          <v-container fluid>
+            <v-checkbox v-model="checkbox">
+              <template v-slot:label>
+                <div>Подписи проставлены на двух бланках, данные корректны</div>
+              </template>
+            </v-checkbox>
+          </v-container>
+          <!-- <canvas></canvas> -->
         </v-card>
-        <v-btn color="primary" @click="finishStep4">
+        <v-btn :disabled="!checkbox" color="primary" @click="finishStep4">
           Подтвердить корректность подписи и передачу посылки
         </v-btn>
         <v-btn text @click="goToStep3"> Вернуться на предыдущий шаг </v-btn>
@@ -132,6 +139,7 @@ export default {
       step2Complete: false,
       step3Complete: false,
       step4Complete: false,
+      checkbox: false,
       order: {
         id: 1,
         departure_date: "25.03.2020",

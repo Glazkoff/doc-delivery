@@ -65,7 +65,7 @@ export default {
   data: () => ({
     drawer: null,
     links: [
-      ["mdi-home", "Главная", "/"],
+      // ["mdi-home", "Главная", "/"],
       ["mdi-bike-fast", "Заказать доставку", "/order-delivery"],
       ["mdi-clipboard-list", "Мои доставки", "/orders"],
       ["mdi-alert-octagon", "Выйти", "/auth"]
