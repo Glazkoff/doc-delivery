@@ -98,14 +98,20 @@
 
       <v-stepper-content step="4">
         <v-card color="" class="mb-12">
-          <v-container fluid>
+          <!-- <v-container fluid>
             <v-checkbox v-model="checkbox">
               <template v-slot:label>
                 <div>Подписи проставлены на двух бланках, данные корректны</div>
               </template>
             </v-checkbox>
+          </v-container> -->
+          <v-container fluid>
+            <h2>Распишитесь в окошке ниже</h2>
+            <canvas></canvas><br />
+            <v-btn text @click="signatureSavePng"> Сохранить как png </v-btn>
+            <v-btn text @click="signatureClear"> Очистить </v-btn><br />
+            <v-btn @click="signatureClear">Сохраниьт подпись в системе</v-btn>
           </v-container>
-          <!-- <canvas></canvas> -->
         </v-card>
         <v-btn :disabled="!checkbox" color="primary" @click="finishStep4">
           Подтвердить корректность подписи и передачу посылки
@@ -126,8 +132,44 @@
 
 <script>
 import MapTwoDots from "../MapTwoDots";
-// import SignaturePad from "signature_pad";
+import SignaturePad from "signature_pad";
 
+function download(dataURL, filename) {
+  if (
+    navigator.userAgent.indexOf("Safari") > -1 &&
+    navigator.userAgent.indexOf("Chrome") === -1
+  ) {
+    window.open(dataURL);
+  } else {
+    var blob = dataURLToBlob(dataURL);
+    var url = window.URL.createObjectURL(blob);
+
+    var a = document.createElement("a");
+    a.style = "display: none";
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  }
+}
+
+function dataURLToBlob(dataURL) {
+  var parts = dataURL.split(";base64,");
+  var contentType = parts[0].split(":")[1];
+  var raw = window.atob(parts[1]);
+  var rawLength = raw.length;
+  var uInt8Array = new Uint8Array(rawLength);
+
+  for (var i = 0; i < rawLength; ++i) {
+    uInt8Array[i] = raw.charCodeAt(i);
+  }
+
+  return new Blob([uInt8Array], { type: contentType });
+}
+let signaturePad;
 export default {
   name: "CourierSpecificOrder",
   components: { MapTwoDots },
@@ -163,6 +205,17 @@ export default {
     };
   },
   methods: {
+    signatureClear() {
+      signaturePad.clear();
+    },
+    signatureSavePng() {
+      if (signaturePad.isEmpty()) {
+        alert("Пожалуйста, сначала внесите подпись");
+      } else {
+        var dataURL = signaturePad.toDataURL();
+        download(dataURL, "signature.png");
+      }
+    },
     finishStep1() {
       this.step1Complete = true;
       this.e13 = 2;
@@ -203,18 +256,23 @@ export default {
     }
   },
   mounted() {
-    // let canvas = document.querySelector("canvas");
-    // let signaturePad = new SignaturePad(canvas);
-    // signaturePad.penColor = "rgb(66, 133, 244)";
-    // function resizeCanvas() {
-    //   var ratio = Math.max(window.devicePixelRatio || 1, 1);
-    //   canvas.width = canvas.offsetWidth * ratio;
-    //   canvas.height = canvas.offsetHeight * ratio;
-    //   canvas.getContext("2d").scale(ratio, ratio);
-    //   signaturePad.clear(); // otherwise isEmpty() might return incorrect value
-    // }
-    // window.addEventListener("resize", resizeCanvas);
-    // resizeCanvas();
+    let canvas = document.querySelector("canvas");
+    canvas.style.border = "1px dashed black";
+    canvas.style.height = "300px";
+    canvas.style.width = "300px";
+    signaturePad = new SignaturePad(canvas);
+    signaturePad.penColor = "rgb(66, 133, 244)";
+    function resizeCanvas() {
+      var ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      signaturePad.clear();
+    }
+
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+    resizeCanvas();
   }
 };
 </script>
