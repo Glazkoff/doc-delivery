@@ -108,7 +108,7 @@
             Нажмите и передайте устройство клиенту
           </v-btn>
           <div v-else>
-            <p>Подпись клиента</p>
+            <h4>Подпись клиента</h4>
             <img height="300" :src="base64img" alt="" /><br />
             <v-btn class="mb-5" text @click="retry()">
               Повторить процедуру
@@ -121,12 +121,15 @@
                 Пожалуйста, оставьте подпись
               </v-card-title>
 
-              <v-card-text class="mt-2">
+              <v-card-text class="mt-2 pb-0">
                 Оставляя подпись, вы подтверждаете получение товара и надлежащее
                 качество обслуживания
               </v-card-text>
               <v-container fluid>
-                <h2>Распишитесь в окошке ниже</h2>
+                <h2>
+                  Распишитесь в окошке ниже и передайте устройство курьеру
+                  обратно
+                </h2>
                 <canvas></canvas><br />
                 <v-btn text @click="signatureSavePng">
                   Сохранить как png
@@ -270,13 +273,23 @@ export default {
         resizeCanvas();
       }, 100);
     },
-    signatureSaveInDb() {
+    async signatureSaveInDb() {
       if (signaturePad.isEmpty()) {
         alert("Пожалуйста, сначала внесите подпись");
       } else {
         console.log(signaturePad.toDataURL());
         this.base64img = signaturePad.toDataURL();
+        let signature = this.base64img.split(";base64,")[1];
+        console.log("!!!", signature);
         // TODO: send it to server
+        try {
+          let obj = {
+            signature
+          };
+          await this.$http.post("/api/signature/", obj);
+        } catch (error) {
+          console.log(error);
+        }
         this.dialog = false;
         this.signatureSaved = true;
       }
