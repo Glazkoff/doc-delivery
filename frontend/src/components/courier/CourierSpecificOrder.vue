@@ -98,22 +98,56 @@
 
       <v-stepper-content step="4">
         <v-card color="" class="mb-12">
-          <!-- <v-container fluid>
-            <v-checkbox v-model="checkbox">
-              <template v-slot:label>
-                <div>Подписи проставлены на двух бланках, данные корректны</div>
-              </template>
-            </v-checkbox>
-          </v-container> -->
-          <v-container fluid>
-            <h2>Распишитесь в окошке ниже</h2>
-            <canvas></canvas><br />
-            <v-btn text @click="signatureSavePng"> Сохранить как png </v-btn>
-            <v-btn text @click="signatureClear"> Очистить </v-btn><br />
-            <v-btn @click="signatureClear">Сохраниьт подпись в системе</v-btn>
-          </v-container>
+          <v-btn
+            class="mb-5"
+            color="dark"
+            dark
+            @click="openModal()"
+            v-if="!signatureSaved"
+          >
+            Нажмите и передайте устройство клиенту
+          </v-btn>
+          <div v-else>
+            <p>Подпись клиента</p>
+            <img height="300" :src="base64img" alt="" /><br />
+            <v-btn class="mb-5" text @click="retry()">
+              Повторить процедуру
+            </v-btn>
+          </div>
+
+          <v-dialog v-model="dialog" width="500">
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                Пожалуйста, оставьте подпись
+              </v-card-title>
+
+              <v-card-text class="mt-2">
+                Оставляя подпись, вы подтверждаете получение товара и надлежащее
+                качество обслуживания
+              </v-card-text>
+              <v-container fluid>
+                <h2>Распишитесь в окошке ниже</h2>
+                <canvas></canvas><br />
+                <v-btn text @click="signatureSavePng">
+                  Сохранить как png
+                </v-btn>
+                <v-btn text @click="signatureClear"> Очистить </v-btn><br />
+                <v-btn @click="signatureSaveInDb"
+                  >Сохранить подпись в системе</v-btn
+                >
+              </v-container>
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialog = false">
+                  Отмена
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-card>
-        <v-btn :disabled="!checkbox" color="primary" @click="finishStep4">
+        <v-btn :disabled="!signatureSaved" color="primary" @click="finishStep4">
           Подтвердить корректность подписи и передачу посылки
         </v-btn>
         <v-btn text @click="goToStep3"> Вернуться на предыдущий шаг </v-btn>
@@ -175,7 +209,10 @@ export default {
   components: { MapTwoDots },
   data() {
     return {
+      dialog: false,
       success: false,
+      signatureSaved: false,
+      base64img: null,
       e13: 1,
       step1Complete: false,
       step2Complete: false,
@@ -205,6 +242,45 @@ export default {
     };
   },
   methods: {
+    retry() {
+      signaturePad.clear();
+      this.base64img = null;
+      this.dialog = true;
+      this.signatureSaved = false;
+    },
+    openModal() {
+      this.dialog = true;
+      setTimeout(() => {
+        let canvas = document.querySelector("canvas");
+        canvas.style.border = "1px dashed black";
+        canvas.style.height = "300px";
+        canvas.style.width = "300px";
+        signaturePad = new SignaturePad(canvas);
+        signaturePad.penColor = "rgb(66, 133, 244)";
+        function resizeCanvas() {
+          var ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+          signaturePad.clear();
+        }
+
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+        resizeCanvas();
+      }, 100);
+    },
+    signatureSaveInDb() {
+      if (signaturePad.isEmpty()) {
+        alert("Пожалуйста, сначала внесите подпись");
+      } else {
+        console.log(signaturePad.toDataURL());
+        this.base64img = signaturePad.toDataURL();
+        // TODO: send it to server
+        this.dialog = false;
+        this.signatureSaved = true;
+      }
+    },
     signatureClear() {
       signaturePad.clear();
     },
@@ -256,23 +332,22 @@ export default {
     }
   },
   mounted() {
-    let canvas = document.querySelector("canvas");
-    canvas.style.border = "1px dashed black";
-    canvas.style.height = "300px";
-    canvas.style.width = "300px";
-    signaturePad = new SignaturePad(canvas);
-    signaturePad.penColor = "rgb(66, 133, 244)";
-    function resizeCanvas() {
-      var ratio = Math.max(window.devicePixelRatio || 1, 1);
-      canvas.width = canvas.offsetWidth * ratio;
-      canvas.height = canvas.offsetHeight * ratio;
-      canvas.getContext("2d").scale(ratio, ratio);
-      signaturePad.clear();
-    }
-
-    window.onresize = resizeCanvas;
-    resizeCanvas();
-    resizeCanvas();
+    // let canvas = document.querySelector("canvas");
+    // canvas.style.border = "1px dashed black";
+    // canvas.style.height = "300px";
+    // canvas.style.width = "300px";
+    // signaturePad = new SignaturePad(canvas);
+    // signaturePad.penColor = "rgb(66, 133, 244)";
+    // function resizeCanvas() {
+    //   var ratio = Math.max(window.devicePixelRatio || 1, 1);
+    //   canvas.width = canvas.offsetWidth * ratio;
+    //   canvas.height = canvas.offsetHeight * ratio;
+    //   canvas.getContext("2d").scale(ratio, ratio);
+    //   signaturePad.clear();
+    // }
+    // window.onresize = resizeCanvas;
+    // resizeCanvas();
+    // resizeCanvas();
   }
 };
 </script>
