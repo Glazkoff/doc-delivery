@@ -36,7 +36,7 @@
           <div v-else>
             <h4>Подпись курьера</h4>
             <img height="300" :src="base64img" alt="" /><br />
-            <v-btn class="mb-5" text @click="retry()">
+            <v-btn class="mb-5" text @click="retryStep2()">
               Повторить процедуру
             </v-btn>
           </div>
@@ -66,7 +66,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="dialog = false">
+                <v-btn color="primary" text @click="dialogStep2 = false">
                   Отмена
                 </v-btn>
               </v-card-actions>
@@ -98,7 +98,7 @@
           <div v-else>
             <h4>Подпись заказчика</h4>
             <img height="300" :src="base64img" alt="" /><br />
-            <v-btn class="mb-5" text @click="retry()">
+            <v-btn class="mb-5" text @click="retryStep3()">
               Повторить процедуру
             </v-btn>
           </div>
@@ -127,7 +127,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="dialog = false">
+                <v-btn color="primary" text @click="dialogStep3 = false">
                   Отмена
                 </v-btn>
               </v-card-actions>
@@ -368,6 +368,18 @@ export default {
       signaturePad.clear();
       this.base64img = null;
       this.dialog = true;
+      this.signatureSaved = false;
+    },
+    retryStep2() {
+      signaturePad.clear();
+      this.base64img = null;
+      this.dialogStep2 = true;
+      this.signatureSaved = false;
+    },
+    retryStep3() {
+      signaturePad.clear();
+      this.base64img = null;
+      this.dialogStep3 = true;
       this.signatureSaved = false;
     },
     openModal() {
