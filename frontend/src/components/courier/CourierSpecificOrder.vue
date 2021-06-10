@@ -6,7 +6,7 @@
 
     <v-stepper v-if="!success" v-model="e13" vertical>
       <v-stepper-step step="1" :complete="step1Complete"
-        >Шаг 1. Заберите посылку у отправителя</v-stepper-step
+        >Шаг 1. Доберитесь до заказчика</v-stepper-step
       >
 
       <v-stepper-content step="1">
@@ -14,35 +14,151 @@
           <MapTwoDots :from="order.pointFrom"></MapTwoDots>
         </v-card>
         <v-btn color="primary" @click="finishStep1">
-          Подтвердить получение курьером посылки
+          Подтвердить встречу с заказчиком
         </v-btn>
       </v-stepper-content>
 
       <v-stepper-step step="2" :complete="step2Complete">
-        Шаг 2. Доставьте посылку получателю
+        Шаг 2. Подтвердите передачу посылки и оставьте подпись
       </v-stepper-step>
 
       <v-stepper-content step="2">
-        <v-card class="mb-12" height="300px">
-          <MapTwoDots :to="order.pointTo"></MapTwoDots>
+        <v-card color="" class="mb-12">
+          <v-btn
+            class="mb-5"
+            color="dark"
+            dark
+            @click="openModalStep2()"
+            v-if="!signatureSaved"
+          >
+            Нажмите и распишитесь
+          </v-btn>
+          <div v-else>
+            <h4>Подпись курьера</h4>
+            <img height="300" :src="base64img" alt="" /><br />
+            <v-btn class="mb-5" text @click="retry()">
+              Повторить процедуру
+            </v-btn>
+          </div>
+
+          <v-dialog v-model="dialogStep2" width="500">
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                Пожалуйста, оставьте подпись
+              </v-card-title>
+
+              <v-card-text class="mt-2 pb-0">
+                Оставляя подпись, вы подтверждаете получение посылки от
+                заказчика
+              </v-card-text>
+              <v-container fluid>
+                <h2>Распишитесь в окошке ниже и сохраните подпись в системе</h2>
+                <canvas id="canvasStep2"></canvas><br />
+                <v-btn text @click="signatureSavePng">
+                  Сохранить как png
+                </v-btn>
+                <v-btn text @click="signatureClear"> Очистить </v-btn><br />
+                <v-btn @click="signatureSaveInDbStep2"
+                  >Сохранить подпись в системе</v-btn
+                >
+              </v-container>
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialog = false">
+                  Отмена
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-card>
-        <v-btn color="primary" @click="finishStep2">
-          Подтвердить нахождение в месте назначения
+        <v-btn :disabled="!signatureSaved" color="primary" @click="finishStep2">
+          Подтвердить корректность подписи и получение посылки
         </v-btn>
         <v-btn text @click="goToStep1"> Вернуться на предыдущий шаг </v-btn>
       </v-stepper-content>
 
-      <!-- <v-stepper-step :rules="[() => false]" step="3">
-        Ad templates
-        <small>Alert message</small>
-      </v-stepper-step> -->
-
       <v-stepper-step step="3" :complete="step3Complete">
-        Шаг 3. Попросите документ, удостоверяющий личность и проверьте данные
+        Шаг 3. Попросите заказчика подтвердить передачу посылки и оставить
+        подпись
       </v-stepper-step>
 
       <v-stepper-content step="3">
-        <!-- <v-card class="mb-12" height="500px"> -->
+        <v-card color="" class="mb-12">
+          <v-btn
+            class="mb-5"
+            color="dark"
+            dark
+            @click="openModalStep3()"
+            v-if="!signatureSaved"
+          >
+            Нажмите и передайте устройство заказчику
+          </v-btn>
+          <div v-else>
+            <h4>Подпись заказчика</h4>
+            <img height="300" :src="base64img" alt="" /><br />
+            <v-btn class="mb-5" text @click="retry()">
+              Повторить процедуру
+            </v-btn>
+          </div>
+
+          <v-dialog v-model="dialogStep3" width="500">
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                Пожалуйста, оставьте подпись
+              </v-card-title>
+
+              <v-card-text class="mt-2 pb-0">
+                Оставляя подпись, вы подтверждаете передачу посылки курьеру
+              </v-card-text>
+              <v-container fluid>
+                <h2>Распишитесь в окошке ниже и сохраните подпись в системе</h2>
+                <canvas id="canvasStep3"></canvas><br />
+                <v-btn text @click="signatureSavePng">
+                  Сохранить как png
+                </v-btn>
+                <v-btn text @click="signatureClear"> Очистить </v-btn><br />
+                <v-btn @click="signatureSaveInDbStep3"
+                  >Сохранить подпись в системе</v-btn
+                >
+              </v-container>
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialog = false">
+                  Отмена
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-card>
+        <v-btn :disabled="!signatureSaved" color="primary" @click="finishStep3">
+          Подтвердить корректность подписи и получение посылки курьером
+        </v-btn>
+        <v-btn text @click="goToStep2"> Вернуться на предыдущий шаг </v-btn>
+      </v-stepper-content>
+
+      <v-stepper-step step="4" :complete="step4Complete">
+        Шаг 4. Доставьте посылку получателю
+      </v-stepper-step>
+
+      <v-stepper-content step="4">
+        <v-card class="mb-12" height="300px">
+          <MapTwoDots :to="order.pointTo"></MapTwoDots>
+        </v-card>
+        <v-btn color="primary" @click="finishStep4">
+          Подтвердить нахождение в месте назначения
+        </v-btn>
+        <v-btn text @click="goToStep3"> Вернуться на предыдущий шаг </v-btn>
+      </v-stepper-content>
+
+      <v-stepper-step step="5" :complete="step5Complete">
+        Шаг 5. Попросите документ, удостоверяющий личность и проверьте данные
+      </v-stepper-step>
+
+      <v-stepper-content step="5">
         <v-container>
           <v-row>
             <v-col cols="6" md="6" sm="12"
@@ -85,18 +201,17 @@
             </v-col>
           </v-row>
         </v-container>
-        <!-- </v-card> -->
-        <v-btn color="primary" @click="finishStep3">
+        <v-btn color="primary" @click="finishStep5">
           Подтвердить корректность данных
         </v-btn>
-        <v-btn text @click="goToStep2"> Вернуться на предыдущий шаг </v-btn>
+        <v-btn text @click="goToStep4"> Вернуться на предыдущий шаг </v-btn>
       </v-stepper-content>
 
-      <v-stepper-step step="4" :complete="step4Complete">
-        Шаг 4. Попросите получателя оставить подпись
+      <v-stepper-step step="6" :complete="step6Complete">
+        Шаг 6. Попросите получателя оставить подпись
       </v-stepper-step>
 
-      <v-stepper-content step="4">
+      <v-stepper-content step="6">
         <v-card color="" class="mb-12">
           <v-btn
             class="mb-5"
@@ -130,7 +245,7 @@
                   Распишитесь в окошке ниже и передайте устройство курьеру
                   обратно
                 </h2>
-                <canvas></canvas><br />
+                <canvas id="canvas"></canvas><br />
                 <v-btn text @click="signatureSavePng">
                   Сохранить как png
                 </v-btn>
@@ -150,10 +265,10 @@
             </v-card>
           </v-dialog>
         </v-card>
-        <v-btn :disabled="!signatureSaved" color="primary" @click="finishStep4">
+        <v-btn :disabled="!signatureSaved" color="primary" @click="finishStep6">
           Подтвердить корректность подписи и передачу посылки
         </v-btn>
-        <v-btn text @click="goToStep3"> Вернуться на предыдущий шаг </v-btn>
+        <v-btn text @click="goToStep5"> Вернуться на предыдущий шаг </v-btn>
       </v-stepper-content>
     </v-stepper>
     <v-card v-else class="pt-5 pb-5">
@@ -217,10 +332,14 @@ export default {
       signatureSaved: false,
       base64img: null,
       e13: 1,
+      dialogStep2: false,
+      dialogStep3: false,
       step1Complete: false,
       step2Complete: false,
       step3Complete: false,
       step4Complete: false,
+      step5Complete: false,
+      step6Complete: false,
       checkbox: false,
       order: {
         id: 1,
@@ -254,7 +373,51 @@ export default {
     openModal() {
       this.dialog = true;
       setTimeout(() => {
-        let canvas = document.querySelector("canvas");
+        let canvas = document.querySelector("#canvas");
+        canvas.style.border = "1px dashed black";
+        canvas.style.height = "300px";
+        canvas.style.width = "300px";
+        signaturePad = new SignaturePad(canvas);
+        signaturePad.penColor = "rgb(66, 133, 244)";
+        function resizeCanvas() {
+          var ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+          signaturePad.clear();
+        }
+
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+        resizeCanvas();
+      }, 100);
+    },
+    openModalStep2() {
+      this.dialogStep2 = true;
+      setTimeout(() => {
+        let canvas = document.querySelector("#canvasStep2");
+        canvas.style.border = "1px dashed black";
+        canvas.style.height = "300px";
+        canvas.style.width = "300px";
+        signaturePad = new SignaturePad(canvas);
+        signaturePad.penColor = "rgb(66, 133, 244)";
+        function resizeCanvas() {
+          var ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+          signaturePad.clear();
+        }
+
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+        resizeCanvas();
+      }, 100);
+    },
+    openModalStep3() {
+      this.dialogStep3 = true;
+      setTimeout(() => {
+        let canvas = document.querySelector("#canvasStep3");
         canvas.style.border = "1px dashed black";
         canvas.style.height = "300px";
         canvas.style.width = "300px";
@@ -294,6 +457,48 @@ export default {
         this.signatureSaved = true;
       }
     },
+    async signatureSaveInDbStep2() {
+      if (signaturePad.isEmpty()) {
+        alert("Пожалуйста, сначала внесите подпись");
+      } else {
+        console.log(signaturePad.toDataURL());
+        this.base64img = signaturePad.toDataURL();
+        let signature = this.base64img.split(";base64,")[1];
+        console.log("!!!", signature);
+        // TODO: send it to server
+        try {
+          let obj = {
+            signature
+          };
+          await this.$http.post("/api/signature/", obj);
+        } catch (error) {
+          console.log(error);
+        }
+        this.dialogStep2 = false;
+        this.signatureSaved = true;
+      }
+    },
+    async signatureSaveInDbStep3() {
+      if (signaturePad.isEmpty()) {
+        alert("Пожалуйста, сначала внесите подпись");
+      } else {
+        console.log(signaturePad.toDataURL());
+        this.base64img = signaturePad.toDataURL();
+        let signature = this.base64img.split(";base64,")[1];
+        console.log("!!!", signature);
+        // TODO: send it to server
+        try {
+          let obj = {
+            signature
+          };
+          await this.$http.post("/api/signature/", obj);
+        } catch (error) {
+          console.log(error);
+        }
+        this.dialogStep3 = false;
+        this.signatureSaved = true;
+      }
+    },
     signatureClear() {
       signaturePad.clear();
     },
@@ -312,14 +517,27 @@ export default {
     finishStep2() {
       this.step2Complete = true;
       this.e13 = 3;
+      this.base64img = null;
+      signaturePad.clear();
+      this.signatureSaved = false;
     },
     finishStep3() {
       this.step3Complete = true;
       this.e13 = 4;
+      this.base64img = null;
+      signaturePad.clear();
+      this.signatureSaved = false;
     },
     finishStep4() {
       this.step4Complete = true;
-      // this.e13 = 2;
+      this.e13 = 5;
+    },
+    finishStep5() {
+      this.step5Complete = true;
+      this.e13 = 6;
+    },
+    finishStep6() {
+      this.step6Complete = true;
       this.success = true;
     },
     goToStep1() {
@@ -327,6 +545,7 @@ export default {
       this.step2Complete = false;
       this.step3Complete = false;
       this.step4Complete = false;
+      this.step5Complete = false;
       this.e13 = 1;
     },
     goToStep2() {
@@ -334,6 +553,7 @@ export default {
       this.step2Complete = false;
       this.step3Complete = false;
       this.step4Complete = false;
+      this.step5Complete = false;
       this.e13 = 2;
     },
     goToStep3() {
@@ -341,7 +561,24 @@ export default {
       this.step2Complete = true;
       this.step3Complete = false;
       this.step4Complete = false;
+      this.step5Complete = false;
       this.e13 = 3;
+    },
+    goToStep4() {
+      this.step1Complete = true;
+      this.step2Complete = true;
+      this.step3Complete = true;
+      this.step4Complete = false;
+      this.step5Complete = false;
+      this.e13 = 4;
+    },
+    goToStep5() {
+      this.step1Complete = true;
+      this.step2Complete = true;
+      this.step3Complete = true;
+      this.step4Complete = true;
+      this.step5Complete = false;
+      this.e13 = 5;
     }
   },
   mounted() {
